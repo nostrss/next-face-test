@@ -1,7 +1,11 @@
 import { TRIANGULATION } from '@/util/triangulation';
+import * as faceLandmarksDetection from '@tensorflow-models/face-landmarks-detection';
 
-export const drawMesh = (prediction, ctx) => {
-  if (!prediction) return;
+export const drawMesh = (
+  prediction: faceLandmarksDetection.Face,
+  ctx: CanvasRenderingContext2D | null | undefined
+) => {
+  if (!prediction || !ctx) return;
   const keyPoints = prediction.keypoints;
   if (!keyPoints) return;
   ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
@@ -21,7 +25,11 @@ export const drawMesh = (prediction, ctx) => {
   }
 };
 
-const drawPath = (ctx, points, closePath) => {
+const drawPath = (
+  ctx: CanvasRenderingContext2D | null | undefined,
+  points: faceLandmarksDetection.Keypoint[],
+  closePath: boolean
+) => {
   const region = new Path2D();
   region.moveTo(points[0].x, points[0].y);
   for (let i = 1; i < points.length; i++) {
@@ -29,6 +37,6 @@ const drawPath = (ctx, points, closePath) => {
     region.lineTo(point.x, point.y);
   }
   if (closePath) region.closePath();
-  ctx.stokeStyle = 'black';
-  ctx.stroke(region);
+  if (ctx) ctx.strokeStyle = 'black'; // Fix: Use 'strokeStyle' instead of 'stokeStyle'
+  ctx?.stroke(region);
 };

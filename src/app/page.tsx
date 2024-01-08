@@ -1,7 +1,6 @@
 'use client';
-import React, { useRef, useState } from 'react';
+import React, { SyntheticEvent, useRef, useState } from 'react';
 import '@tensorflow/tfjs';
-// Register WebGL backend.
 import '@tensorflow/tfjs-backend-webgl';
 import '@mediapipe/face_mesh';
 import Webcam from 'react-webcam';
@@ -20,13 +19,17 @@ function App() {
   const canvasRef = useRef(null);
   const [loaded, setLoaded] = useState(false);
 
-  const handleVideoLoad = (videoNode) => {
-    const video = videoNode.target;
+  const handleVideoLoad = (
+    videoNode: SyntheticEvent<HTMLVideoElement, Event>
+  ) => {
+    if (!videoNode) return;
+    const video = videoNode.target as HTMLVideoElement;
     if (video.readyState !== 4) return;
     if (loaded) return;
     runDetector(video, canvasRef.current);
     setLoaded(true);
   };
+
   return (
     <div>
       <Webcam
